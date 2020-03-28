@@ -29,7 +29,7 @@ def mae_rmse(r_pred, test_mat):
     y_pred = r_pred[test_mat>0]
     y_true = test_mat[test_mat>0]
     mae = mean_absolute_error(y_true, y_pred)
-    rmse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
     return mae, rmse 
 
 
