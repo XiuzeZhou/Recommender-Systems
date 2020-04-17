@@ -40,6 +40,37 @@ def evaluation(pred_mat, train_mat, test_mat):
     return mae, rmse, recall, precision
 	
 	
+def get_hit(ranklist,rated_item):
+    result = 0
+    for item in ranklist:
+        if item==rated_item:
+            result = 1
+    return result
+    
+    
+def get_ndcg(ranklist,rated_item):
+    result = 0
+    for i in range(len(ranklist)):
+        item = ranklist[i]
+        if item==rated_item:
+            result = math.log(2)/math.log(i+2)
+    return result
+
+
+def hit_ndcg(test_sequence, ranklist):
+    length = len(test_sequence)
+    hits,ndcgs=[],[]
+    for idx in range(length):
+        user = test_sequence[idx,0].astype(np.int32)
+        rated_item = test_sequence[idx,1].astype(np.int32)
+        hr = get_hit(ranklist[user],rated_item)
+        ndcg = get_ndcg(ranklist[user],rated_item)
+        hits.append(hr)
+        ndcgs.append(ndcg)
+    #hr,ndcg = np.array(hits).mean(),np.array(ndcgs).mean()
+    return hits,ndcgs	
+	
+	
 def figure(values_list, name=''):
     fig=plt.figure(name)
     x = range(len(values_list))
