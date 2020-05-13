@@ -76,7 +76,6 @@ class mlp():
         
         # ------output layer-----
         all_weights['weight_n'] = tf.Variable(tf.random.normal([self.hidden_sizes[-1], 1], 0, 0.1), name='weight_n')
-        all_weights['bias_n'] = tf.Variable(tf.zeros([1]), name='bias_n')
 
         return all_weights
         
@@ -109,7 +108,7 @@ class mlp():
             
         layer0 = tf.nn.relu(tf.matmul(tf.concat([embed_items,embed_users],1), self.weights['weight_0']) + self.weights['bias_0'])
         layer1 = tf.nn.relu(tf.matmul(layer0, self.weights['weight_1']) + self.weights['bias_1'])       
-        y_ = tf.matmul(layer1,self.weights['weight_n']) + self.weights['bias_n']
+        y_ = tf.matmul(layer1,self.weights['weight_n'])
         return y_         
         
         
