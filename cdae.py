@@ -12,7 +12,8 @@ class cdae():
                  batch_size = 256,         #batch大小
                  learning_rate = 1e-3,     #学习率
                  lamda_regularizer = 1e-3, #正则项系数
-                 dropout_rate = 0.5        # dropout rate 
+                 dropout_rate = 0.5,       # dropout rate
+                 noise_level = 1e-3
                 ):
         self.users_num = users_num
         self.items_num = items_num
@@ -21,6 +22,7 @@ class cdae():
         self.learning_rate = learning_rate
         self.lamda_regularizer = lamda_regularizer
         self.dropout_rate = dropout_rate
+        self.noise_level = noise_level
         
         self.train_loss_records = []  
         self.build_graph()   
@@ -86,7 +88,8 @@ class cdae():
         
     # 网络的前向传播
     def inference(self, rating_inputs, user_inputs):
-        self.corrupted_inputs = tf.nn.dropout(rating_inputs, rate=self.dropout_prob)
+        inputs_noisy = rating_inputs + self.noise_level * tf.random_normal(tf.shape(rating_inputs))
+        self.corrupted_inputs = tf.nn.dropout(inputs_noisy, rate=self.dropout_prob)
         Vu = tf.reshape(tf.nn.embedding_lookup(self.weights['V'], user_inputs),(-1, self.hidden_size))
         encoder = tf.nn.sigmoid(tf.matmul(self.corrupted_inputs, self.weights['W1']) + Vu + self.weights['b1'])
         decoder = tf.identity(tf.matmul(encoder, self.weights['W2']) + self.weights['b2'])
